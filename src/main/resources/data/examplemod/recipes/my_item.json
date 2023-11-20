@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "a": {
+      "item": "minecraft:gold_nugget"
+    },
+    "b": {
+      "item": "minecraft:paper"
+    }
+  },
+  "pattern": [
+    "aba",
+    "b b",
+    "aba"
+  ],
+  "result": {
+    "item": "examplemod:my_item"
+  }
+}
