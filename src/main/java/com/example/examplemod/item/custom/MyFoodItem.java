@@ -18,7 +18,7 @@ public class MyFoodItem extends Item {
 
     // Анимация еды
     @Override
-    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack stack) {
+    public @NotNull UseAnim getUseAnimation(ItemStack stack) {
         return UseAnim.EAT;
     }
 
