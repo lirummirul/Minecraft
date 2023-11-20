@@ -1,7 +1,8 @@
-package com.example.examplemod;
+package com.example.examplemod.block;
 
+import com.example.examplemod.ExampleMod;
+import com.example.examplemod.item.MyItem;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.AdventureModeCheck;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
