@@ -1,7 +1,7 @@
 package com.example.examplemod.item;
 
 import com.example.examplemod.ExampleMod;
-import com.example.examplemod.item.custom.MyFoodItem;
+import com.example.examplemod.item.custom.MyEnderItem;
 import net.minecraft.world.item.Item;
 
 import net.minecraft.world.item.*;
@@ -14,7 +14,7 @@ public class MyItem {
     // Создаёт отложенный регистратор для моего предмета
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ExampleMod.MODID);
     // Регистрирую свой предмет как еду, в креативе его в этой вкладке можно будет найти
-    public static final RegistryObject<Item> MY_ITEM = ITEMS.register("my_item",  () -> new MyFoodItem(new Item.Properties().tab(CreativeModeTab.TAB_FOOD)));
+    public static final RegistryObject<Item> MY_ITEM = ITEMS.register("my_item",  () -> new MyEnderItem(new Item.Properties().tab(CreativeModeTab.TAB_FOOD).stacksTo(128)));
 
     // Основной регистратор
     public static void register(IEventBus eventBus) {
