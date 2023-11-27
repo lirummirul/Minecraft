@@ -17,6 +17,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class MyEnderItem extends Item {
 
+
+    // Вот тут выставляю я stacksTo = 128, взять максимально я могу 128 предметов,
+    // а в инвентарь могу положить максимум 64, не понимаю как это изменить
     public MyEnderItem(Properties tab) {
         super(new Item.Properties()
                 .tab(CreativeModeTab.TAB_MISC)
