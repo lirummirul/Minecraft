@@ -3,11 +3,13 @@ package com.example.examplemod.event;
 import com.example.examplemod.ExampleMod;
 import com.example.examplemod.block.MyBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderSet;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -27,23 +29,26 @@ public class ModEvents {
         public static void onPlayerEnterBlock(PlayerEvent event) {
             Player player = event.getEntity();
             if (player != null) {
-                // Получаем вектор направления взгляда игрока
-                Vec3 lookVector = player.getLookAngle();
-                // Получаем текущий мир, в котором находится игрок
-                Level world = player.level;
-                // Получаем позицию игрока в мире
-                BlockPos playerPos = player.blockPosition();
-                // Устанавливаем расстояние, на котором должен происходить "поиск" блока перед игроком
-                double reachDistance = 2.0;
-                // Вычисляем позицию, на которой должен быть установлен блок
-                BlockPos placePos = new BlockPos(playerPos.getX() + lookVector.x * reachDistance,
-                        playerPos.getY() + lookVector.y * reachDistance,
-                        playerPos.getZ() + lookVector.z * reachDistance);
-                // Получаем состояние блока, который мы хотим установить
-                BlockState blockState = MyBlock.MY_BLOCK.get().defaultBlockState();
-                // Устанавливаем блок в мире на вычисленной позиции
-                world.setBlock(placePos, blockState, 3);
-                tickCounter++;
+                BlockPos playerPos = player.blockPosition(); // Получаем позицию игрока в мире
+                System.out.println("Моя позиция в мире : " + playerPos);
+                int x = (int) Math.floor(playerPos.getX()); // Округляем координату x до ближайшего меньшего целого числа
+                System.out.println("Теперь округляем до меньшего целого числа : " + x);
+                BlockPos correctedPlayerBlockPos = new BlockPos(x, playerPos.getY(), playerPos.getZ()); // Получаем новую позицию блока игрока с корректной координатой x
+                BlockState blockState = player.level.getBlockState(correctedPlayerBlockPos);
+                System.out.println("Я стою на этом блоке : " + blockState);
+                if (blockState.is(MyBlock.MY_BLOCK.get())) { // Проверяем, является ли блок, на котором стоит игрок, вашим блоком
+                    System.out.println("вот этот блок : " + blockState);
+                    Vec3 lookVector = player.getLookAngle(); // Получаем вектор направления взгляда игрока
+                    Level world = player.level; // Получаем текущий мир, в котором находится игрок
+                    BlockPos newPlayerPos = player.blockPosition(); // Получаем позицию игрока в мире
+                    double reachDistance = 1.0; // Устанавливаем расстояние, на котором должен происходить "поиск" блока перед игроком
+                    BlockPos placePos = new BlockPos(newPlayerPos.getX() + lookVector.x * reachDistance,
+                            newPlayerPos.getY() + lookVector.y * reachDistance,
+                            newPlayerPos.getZ() + lookVector.z * reachDistance); // Вычисляем позицию, на которой должен быть установлен блок
+                    BlockState myBlockState = MyBlock.MY_BLOCK.get().defaultBlockState(); // Получаем состояние блока, который мы хотим установить
+                    world.setBlock(placePos, myBlockState, 3); // Устанавливаем блок в мире на вычисленной позиции
+//                    tickCounter++;
+                }
             }
         }
 
@@ -55,10 +60,7 @@ public class ModEvents {
                         BlockPos playerPos = event.player.blockPosition();
                         BlockState blockState = event.player.level.getBlockState(playerPos);
                         if (blockState.getBlock() == MyBlock.MY_BLOCK.get()) { // Проверка, что блок - ваш блок
-                            // Ваш блок
-                            // Удаляем блок, если игрок покинул его
                             event.player.level.setBlock(playerPos, Blocks.AIR.defaultBlockState(), 3);
-//                                    world.setBlock(playerPos, Blocks.AIR.defaultBlockState(), 3);
                         }
                     }
                 }

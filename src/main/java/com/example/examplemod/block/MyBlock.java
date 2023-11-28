@@ -51,27 +51,4 @@ public class MyBlock {
         BLOCKS.register(eventBus);
     }
 
-//    public InteractionResult onItemUse(UseOnContext context) {
-//        Player player = context.getPlayer();
-//        if (player != null) {
-//            Vec3 lookVector = player.getLookAngle();
-//            Level world = player.level;
-//            BlockPos playerPos = player.blockPosition();
-//            double reachDistance = 5.0; // Расстояние до размещения блока (может быть изменено)
-//            BlockPos placePos = new BlockPos(playerPos.getX() + lookVector.x * reachDistance,
-//                    playerPos.getY() + lookVector.y * reachDistance,
-//                    playerPos.getZ() + lookVector.z * reachDistance);
-//                // Размещение блока на позиции placePos
-////            BlockState blockState = MyBlock.; // Здесь нужно использовать ваш блок и состояние блока
-////            world.setBlock(placePos, blockState, 3); // 3 - флаги для обновления блока
-//
-//            // yourBlock.placeBlock(context.getLevel(), placePos, context.getPlayer());
-//
-//            return InteractionResult.SUCCESS;
-//        }
-//        return InteractionResult.PASS;
-//    }
-
-
-
 }
