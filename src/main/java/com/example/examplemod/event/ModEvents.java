@@ -29,25 +29,46 @@ public class ModEvents {
         public static void onPlayerEnterBlock(PlayerEvent event) {
             Player player = event.getEntity();
             if (player != null) {
-                BlockPos playerPos = player.blockPosition(); // Получаем позицию игрока в мире
-                System.out.println("Моя позиция в мире : " + playerPos);
-                int x = (int) Math.floor(playerPos.getX()); // Округляем координату x до ближайшего меньшего целого числа
-                System.out.println("Теперь округляем до меньшего целого числа : " + x);
-                BlockPos correctedPlayerBlockPos = new BlockPos(x, playerPos.getY(), playerPos.getZ()); // Получаем новую позицию блока игрока с корректной координатой x
-                BlockState blockState = player.level.getBlockState(correctedPlayerBlockPos);
-                System.out.println("Я стою на этом блоке : " + blockState);
-                if (blockState.is(MyBlock.MY_BLOCK.get())) { // Проверяем, является ли блок, на котором стоит игрок, вашим блоком
-                    System.out.println("вот этот блок : " + blockState);
-                    Vec3 lookVector = player.getLookAngle(); // Получаем вектор направления взгляда игрока
-                    Level world = player.level; // Получаем текущий мир, в котором находится игрок
-                    BlockPos newPlayerPos = player.blockPosition(); // Получаем позицию игрока в мире
-                    double reachDistance = 1.0; // Устанавливаем расстояние, на котором должен происходить "поиск" блока перед игроком
-                    BlockPos placePos = new BlockPos(newPlayerPos.getX() + lookVector.x * reachDistance,
-                            newPlayerPos.getY() + lookVector.y * reachDistance,
-                            newPlayerPos.getZ() + lookVector.z * reachDistance); // Вычисляем позицию, на которой должен быть установлен блок
-                    BlockState myBlockState = MyBlock.MY_BLOCK.get().defaultBlockState(); // Получаем состояние блока, который мы хотим установить
-                    world.setBlock(placePos, myBlockState, 3); // Устанавливаем блок в мире на вычисленной позиции
-//                    tickCounter++;
+//                BlockPos playerPos = player.blockPosition(); // Получаем позицию игрока в мире
+//                BlockPos checkPos = playerPos.offset(playerPos);
+//                BlockState checkBlockState = player.level.getBlockState(checkPos);
+//                System.out.println("Моя позиция в мире : " + playerPos);
+//
+//                int x = (int) Math.floor(checkBlockState.getX()) + 1; // Округляем координату x до ближайшего меньшего целого числа
+//                System.out.println("Теперь округляем до меньшего целого числа : " + x);
+//                BlockPos correctedPlayerBlockPos = new BlockPos(x, playerPos.getY(), playerPos.getZ()); // Получаем новую позицию блока игрока с корректной координатой x
+//                BlockState blockState = player.level.getBlockState(correctedPlayerBlockPos);
+//                System.out.println("Я стою на этом блоке : " + blockState);
+
+                int radius = 1;
+                BlockPos playerPos = player.blockPosition();
+
+                for (int x = -radius; x <= radius; x++) {
+                    for (int y = -radius; y <= radius; y++) {
+                        for (int z = -radius; z <= radius; z++) {
+                            BlockPos checkPos = playerPos.offset(x, y, z);
+                            BlockState checkBlockState = player.level.getBlockState(checkPos);
+
+                            System.out.println("Моя позиция в мире : " + checkPos);
+                            System.out.println("Я стою на этом блоке : " + checkBlockState);
+
+
+                            if (checkBlockState.is(MyBlock.MY_BLOCK.get())) { // Проверяем, является ли блок, на котором стоит игрок, вашим блоком
+
+                                System.out.println("вот этот блок : " + checkBlockState);
+                                Vec3 lookVector = player.getLookAngle(); // Получаем вектор направления взгляда игрока
+                                Level world = player.level; // Получаем текущий мир, в котором находится игрок
+                                BlockPos newPlayerPos = player.blockPosition(); // Получаем позицию игрока в мире
+                                double reachDistance = 2.0; // Устанавливаем расстояние, на котором должен происходить "поиск" блока перед игроком
+                                BlockPos placePos = new BlockPos(newPlayerPos.getX() + lookVector.x * reachDistance,
+                                        newPlayerPos.getY() + lookVector.y * reachDistance,
+                                        newPlayerPos.getZ() + lookVector.z * reachDistance); // Вычисляем позицию, на которой должен быть установлен блок
+                                BlockState myBlockState = MyBlock.MY_BLOCK.get().defaultBlockState(); // Получаем состояние блока, который мы хотим установить
+                                world.setBlock(placePos, myBlockState, 3); // Устанавливаем блок в мире на вычисленной позиции
+                                tickCounter++;
+                            }
+                        }
+                    }
                 }
             }
         }
