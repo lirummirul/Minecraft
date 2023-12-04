@@ -10,104 +10,45 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.ArrayList;
-import java.util.List;
+import static com.example.examplemod.block.BridgeBlock.createdBlockPositions;
 
 public class ModEvents {
     @Mod.EventBusSubscriber(modid = ExampleMod.MODID)
     public static class ForgeEvents {
+
         private static int tickCounter = 0;
-        private static final List<BlockPos> createdBlockPositions = new ArrayList<>();
-        static BlockPos lastPlayerPosition;
-//        = event.player.blockPosition();
-        @SubscribeEvent
-        public static void onPlayerEnterBlock(PlayerEvent event) {
-            Player player = event.getEntity();
-            if (player != null) {
-//                BlockPos playerPos = player.blockPosition(); // Получаем позицию игрока в мире
-//                BlockPos checkPos = playerPos.offset(playerPos);
-//                BlockState checkBlockState = player.level.getBlockState(checkPos);
-//                System.out.println("Моя позиция в мире : " + playerPos);
-//
-//                int x = (int) Math.floor(checkBlockState.getX()) + 1; // Округляем координату x до ближайшего меньшего целого числа
-//                System.out.println("Теперь округляем до меньшего целого числа : " + x);
-//                BlockPos correctedPlayerBlockPos = new BlockPos(x, playerPos.getY(), playerPos.getZ()); // Получаем новую позицию блока игрока с корректной координатой x
-//                BlockState blockState = player.level.getBlockState(correctedPlayerBlockPos);
-//                System.out.println("Я стою на этом блоке : " + blockState);
-
-                lastPlayerPosition = player.blockPosition();
-                int radius = 1;
-                BlockPos playerPos = player.blockPosition();
-
-                for (int x = -radius; x <= radius; x++) {
-                    for (int y = -radius; y <= radius; y++) {
-                        for (int z = -radius; z <= radius; z++) {
-                            BlockPos checkPos = playerPos.offset(x, y, z);
-                            BlockState checkBlockState = player.level.getBlockState(checkPos);
-
-//                            System.out.println("Моя позиция в мире : " + checkPos);
-//                            System.out.println("Я стою на этом блоке : " + checkBlockState);
-
-
-                            if (checkBlockState.is(MyBlock.MY_BLOCK.get())) { // Проверяем, является ли блок, на котором стоит игрок, вашим блоком
-                                createdBlockPositions.add(checkPos);
-
-                                System.out.println("вот этот блок : " + checkBlockState);
-                                Vec3 lookVector = player.getLookAngle(); // Получаем вектор направления взгляда игрока
-                                Level world = player.level; // Получаем текущий мир, в котором находится игрок
-                                BlockPos newPlayerPos = player.blockPosition(); // Получаем позицию игрока в мире
-                                double reachDistance = 2.0; // Устанавливаем расстояние, на котором должен происходить "поиск" блока перед игроком
-                                BlockPos placePos = new BlockPos(newPlayerPos.getX() + lookVector.x * reachDistance,
-                                        newPlayerPos.getY() + lookVector.y * reachDistance,
-                                        newPlayerPos.getZ() + lookVector.z * reachDistance); // Вычисляем позицию, на которой должен быть установлен блок
-                                BlockState myBlockState = MyBlock.MY_BLOCK.get().defaultBlockState(); // Получаем состояние блока, который мы хотим установить
-                                world.setBlock(placePos, myBlockState, 3); // Устанавливаем блок в мире на вычисленной позиции
-//                                tickCounter++;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-//        @SubscribeEvent
-//        public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-//            tickCounter++;
-//            if(event.side == LogicalSide.CLIENT) {
-//                if (tickCounter >= 100) {
-//                    if (event.player.isOnGround()) { // Проверка, что игрок находится на земле
-//                        BlockPos playerPos = event.player.blockPosition();
-//                        event.player.level.setBlock(playerPos, Blocks.AIR.defaultBlockState(), 3);
-//                    }
-//                    tickCounter = 0;
-//                }
-//            }
-//        }
 
         @SubscribeEvent
         public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
             if (event.side == LogicalSide.CLIENT) {
-                // Проверяем, изменилась ли позиция игрока с прошлого тика
-                if (!event.player.blockPosition().equals(lastPlayerPosition)) {
-                    lastPlayerPosition = event.player.blockPosition(); // Обновляем последнюю позицию игрока
-                    tickCounter = 0; // Обнуляем счетчик тиков
+                BlockPos playerPos = event.player.blockPosition();
+                BlockState blockState = event.player.level.getBlockState(playerPos);
+                if (blockState.is(MyBlock.MY_BLOCK.get())) {
+                    tickCounter = 0;
                 } else {
                     tickCounter++;
                     if (tickCounter >= 100) {
-                        BlockPos playerPos = event.player.blockPosition();
-                        BlockState checkBlockState = event.player.level.getBlockState(playerPos);
-                        if (!checkBlockState.is(MyBlock.MY_BLOCK.get()))
-                            removeBlocks(event.player.level);
-                        // Если прошло 100 тиков и игрок не менял свою позицию, удаляем блоки
-                        tickCounter = 0; // Обнуляем счетчик тиков после удаления блоков
+                        int radius = 1;
+                        boolean flag = false;
+                        for (int x = -radius; x <= radius; x++) {
+                            for (int y = -radius; y <= radius; y++) {
+                                for (int z = -radius; z <= radius; z++) {
+                                    BlockPos checkPos = playerPos.offset(x, y, z);
+                                    BlockState checkBlockState = event.player.level.getBlockState(checkPos);
+                                    if (checkBlockState.is(MyBlock.MY_BLOCK.get())) {
+                                        flag = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (!flag) removeBlocks(event.player.level);
+                        tickCounter = 0;
                     }
                 }
             }
@@ -115,37 +56,12 @@ public class ModEvents {
 
         private static void removeBlocks(Level world) {
             for (BlockPos pos :  createdBlockPositions) {
-                // Получаем состояние блока на определенной позиции
                 BlockState blockState = world.getBlockState(pos);
-                // Проверяем, является ли этот блок тем, который мы хотим удалить
-                if (blockState.getBlock() == MyBlock.MY_BLOCK.get()) {
-                    // Удаляем блок из мира
-                    world.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                if (blockState.equals(Blocks.WARPED_PLANKS.defaultBlockState())) {
+                    world.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
                 }
             }
         }
-
-
-
-//        // Метод для отслеживания тиков
-//        @SubscribeEvent
-//        public void onServerTick(TickEvent event) {
-//            if (event.side == LogicalSide.CLIENT || event.phase != TickEvent.Phase.END) {
-//                return;
-//            }
-//
-//            tickCounter++;
-//            if (tickCounter >= 20) {
-//                // Удаляем вашу конструкцию или блоки через 20 тиков
-//                // Например, устанавливаем воздух на позиции блока
-//                Level world = event.world;
-//                // Пример удаления конструкции на позиции pos
-//                BlockPos pos = /* позиция вашей конструкции */;
-//                world.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-//                // Сбрасываем счетчик тиков
-//                tickCounter = 0;
-//            }
-//        }
 
         @SubscribeEvent
         public static void onLivingHurt(LivingHurtEvent event) {
@@ -159,5 +75,7 @@ public class ModEvents {
                 }
             }
         }
+
     }
+
 }
