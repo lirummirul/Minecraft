@@ -61,6 +61,7 @@ public class ModEvents {
                     world.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
                 }
             }
+            createdBlockPositions.clear();
         }
 
         @SubscribeEvent
