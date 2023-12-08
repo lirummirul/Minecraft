@@ -25,7 +25,7 @@ public class BridgeBlock extends Block {
         Vec3 lookVector = entity.getLookAngle().normalize();
         Vec3 playerPos = entity.position();
 
-        double reachDistance = 2.0;
+        double reachDistance = 1.0;
 
         if (createdBlockPositions.isEmpty()) {
             currentBlockPos = new BlockPos(playerPos.add(lookVector.x() * reachDistance,
@@ -33,15 +33,12 @@ public class BridgeBlock extends Block {
                     lookVector.z() * reachDistance));
 //            System.out.println("currentBlockPos : " + currentBlockPos);
         } else {
-            int i = createdBlockPositions.size();
-            while (i > 0) {
-                reachDistance++;
-                i--;
-            }
-            Vec3 nextBlockPos = playerPos.add(lookVector.x() * reachDistance,
+            BlockPos lastBlockPos = createdBlockPositions.get(createdBlockPositions.size() - 1);
+            Vec3 ls = new Vec3(lastBlockPos.getX(), lastBlockPos.getY(), lastBlockPos.getZ());
+            Vec3 nextBlockPos = ls.add(lookVector.x() * reachDistance,
                     lookVector.y() * reachDistance,
                     lookVector.z() * reachDistance);
-            currentBlockPos = new BlockPos(nextBlockPos);
+            currentBlockPos = new BlockPos(Math.round(nextBlockPos.x), Math.round(nextBlockPos.y), Math.round(nextBlockPos.z));
 //            System.out.println("currentBlockPos in else : " + currentBlockPos);
         }
 //        System.out.println("createdBlockPositions : " + createdBlockPositions);
