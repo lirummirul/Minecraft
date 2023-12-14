@@ -1,7 +1,7 @@
 package com.example.examplemod.event;
 
 import com.example.examplemod.ExampleMod;
-import com.example.examplemod.block.MyBlock;
+import com.example.examplemod.init.MyBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.animal.Sheep;

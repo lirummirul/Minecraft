@@ -1,0 +1,20 @@
+{
+  "textures": {
+    "all": "examplemod:block/my_tile_block"
+  },
+  "elements": [
+    {
+      "from": [2, 0, 2],
+      "to": [14, 16, 14],
+      "faces": {
+        "down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#all", "cullface": "down" },
+        "up":    { "texture": "#all", "cullface": "up" },
+        "north": { "texture": "#all", "cullface": "north" },
+        "south": { "texture": "#all", "cullface": "south" },
+        "west":  { "texture": "#all", "cullface": "west" },
+        "east":  { "texture": "#all", "cullface": "east" }
+      },
+      "__comment": "Center post"
+    }
+  ]
+}

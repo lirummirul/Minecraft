@@ -1,6 +1,7 @@
 package com.example.examplemod;
 
-import com.example.examplemod.block.MyBlock;
+import com.example.examplemod.init.MyBlockEntities;
+import com.example.examplemod.init.MyBlock;
 import com.example.examplemod.item.MyItem;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -31,10 +32,16 @@ public class ExampleMod {
     public ExampleMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::commonSetup);
+
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
+
         MyBlock.register(modEventBus);
         MyItem.register(modEventBus);
+
+        MyBlockEntities.register(modEventBus);
+//        MyBlock.registerBlocks();
+
         MinecraftForge.EVENT_BUS.register(this);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "a": {
+      "item": "minecraft:diamond_sword"
+    },
+    "b": {
+      "item": "minecraft:warped_planks"
+    }
+  },
+  "pattern": [
+    " a ",
+    " b ",
+    " b "
+  ],
+  "result": {
+    "item": "examplemod:my_tile_block"
+  }
+}
