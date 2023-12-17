@@ -1,81 +1,69 @@
 package com.example.examplemod.block;
 
-import com.example.examplemod.ExampleMod;
 import com.example.examplemod.entity.TileEntity;
-import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.LecternBlockEntity;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraftforge.fml.common.Mod;
-import com.google.common.collect.Maps;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ThrownTrident;
-import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Map;
-
-//@Mod.EventBusSubscriber(modid = "examplemod", bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class TileBlock extends Block {
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
-    public static final BooleanProperty HAS_BOOK = BlockStateProperties.HAS_BOOK;
+public class TileBlock extends Block implements EntityBlock {
     public TileBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        ItemStack heldItem = player.getItemInHand(hand);
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+
+        if (blockEntity instanceof TileEntity tileEntity) {
+            ItemStack storedItemStack = tileEntity.getItem();
+            BlockPos blockAbovePos = pos.above();
+            // Если в руке игрока есть предмет, попробуйте положить его на блок
+            if (!heldItem.isEmpty()) {
+                System.out.println("heldItem : " + heldItem);
+                // Проверяем, что в блоке ничего не хранится
+//                if (storedItemStack.isEmpty()) {
+                if (storedItemStack.isEmpty() || ItemStack.isSame(storedItemStack, heldItem)) {
+                    System.out.println("storedItemStack : " + storedItemStack);
+                    // Положить предмет из руки в блок
+                    tileEntity.setItem(heldItem.copy());
+                    // Убрать предмет из руки игрока
+//                    if (!player.isCreative()) {
+                        heldItem.shrink(1); // Уменьшить количество предметов в руке
+//                    }
+                    return InteractionResult.SUCCESS;
+                }
+            }
+            // Если в руке игрока ничего нет, попробуйте взять предмет из блока
+            else if (heldItem.isEmpty() && !storedItemStack.isEmpty()) {
+                System.out.println("Внутри else");
+                // Проверяем, что в блоке есть предмет
+                if (level.isClientSide()) {
+                    System.out.println("Внутри else => внутри if ");
+                    // Выполнить действия на клиентской стороне (если необходимо)
+                    return InteractionResult.SUCCESS;
+                } else {
+                    System.out.println("Внутри else => внутри else ");
+                    // Очистить предмет из блока
+                    player.setItemInHand(hand, storedItemStack.copy());
+                    tileEntity.removeItem();
+                    return InteractionResult.SUCCESS;
+                }
+            }
+        }
+
+        return InteractionResult.PASS;
+    }
+
+
 
 //    public InteractionResult use(BlockState state, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult result) {
 ////            ItemStack itemstack = player.getItemInHand(interactionHand);
@@ -102,29 +90,97 @@ public class TileBlock extends Block {
 //    }
 
     // Метод для обработки события клика правой кнопкой мыши на блоке
-    public InteractionResult use(BlockState state, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult result) {
-        // Получаем предмет в руке игрока
-        ItemStack itemStack = player.getItemInHand(interactionHand);
+//    public InteractionResult use(BlockState state, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult result) {
+//        // Получаем предмет в руке игрока
+//        ItemStack itemStack = player.getItemInHand(interactionHand);
+////        BlockPos bp = new BlockPos(blockPos.getX() + 1, blockPos.getY(), blockPos.getZ());
+////        BlockPos bp2 = new BlockPos(blockPos.getX() + 2, blockPos.getY(), blockPos.getZ());
+//        BlockEntity blockEntity = level.getBlockEntity(blockPos);
+////        BlockEntity blockEntity2 = level.getBlockEntity(bp);
+////        BlockEntity blockEntity3 = level.getBlockEntity(bp2);
+//
+//        System.out.println("blockEntity : " + blockEntity);
+////        System.out.println("blockEntity : " + blockEntity2);
+////        System.out.println("blockEntity : " + blockEntity3);
+//        System.out.println("blockPos : " + blockPos);
+//
+//        // Проверяем, что предмет в руке не пустой
+//        if (!itemStack.isEmpty()) {
+//            // Проверяем, что позиция блока не пустая
+//            if (level.getBlockState(blockPos).isSolidRender(level, blockPos)) {
+//                // Получаем позицию блока, на который хотим положить предмет (например, блок над нажатым блоком)
+//                BlockPos blockAbovePos = blockPos.above();
+//                // Проверяем, что блок выше существует и не занят
+//                if (level.getBlockState(blockAbovePos).isAir()) {
+//                    // Получаем блок из предмета в руке
+//                    Block block = Block.byItem(itemStack.getItem());
+//                    BlockState blockState = block.defaultBlockState(); // Получаем состояние блока из предмета
+//
+////                    System.out.println("blockState : " + blockState);
+//                    // Кладем предмет из руки на блок выше текущего
+////                    if (!level.isClientSide) {
+//                        level.setBlockAndUpdate(blockAbovePos, blockState); // Например, заменяем блок на доски из дуба
+////                        level.setBlockAndUpdate(blockAbovePos, Blocks.OAK_PLANKS.defaultBlockState()); // Например, заменяем блок на доски из дуба
+//                        return InteractionResult.SUCCESS; // Взаимодействие успешно выполнено
+////                    }
+//                }
+//            }
+//        } else {
+//            System.out.println("Я внутри else ");
+//            putInPlayersHandAndRemove(state,level,blockPos,player,interactionHand, itemStack);
+//            return InteractionResult.SUCCESS;
+//        }
+//
+//        return InteractionResult.PASS; // Взаимодействие не выполнено
+//    }
 
-        // Проверяем, что предмет в руке не пустой
-        if (!itemStack.isEmpty()) {
-            // Проверяем, что позиция блока не пустая
-            if (level.getBlockState(blockPos).isSolidRender(level, blockPos)) {
-                // Получаем позицию блока, на который хотим положить предмет (например, блок над нажатым блоком)
-                BlockPos blockAbovePos = blockPos.above();
 
-                // Проверяем, что блок выше существует и не занят
-                if (level.getBlockState(blockAbovePos).isAir()) {
-                    // Кладем предмет из руки на блок выше текущего
-                    if (!level.isClientSide) {
-                        level.setBlockAndUpdate(blockAbovePos, Blocks.OAK_PLANKS.defaultBlockState()); // Например, заменяем блок на доски из дуба
-                        return InteractionResult.SUCCESS; // Взаимодействие успешно выполнено
-                    }
-                }
+//    public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+//        if (level.isClientSide) {
+//            ItemStack itemstack = player.getItemInHand(interactionHand);
+//            return itemstack.is(Items.LEAD) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+//        } else {
+//            return LeadItem.bindPlayerMobs(player, level, blockPos);
+//        }
+//    }
+
+    public void putInPlayersHandAndRemove(TileEntity tileEntity, Level world, Player player, ItemStack itemStack) {
+//        System.out.println("pos : " + pos);
+
+        if (itemStack.isEmpty()) {
+            // Помещаем предмет в инвентарь игрока или выкидываем его на землю
+            if (!player.addItem(itemStack)) {
+                world.addFreshEntity(new ItemEntity(world, player.getX(), player.getY(), player.getZ(), itemStack));
             }
+            tileEntity.removeItem();
+            // Убираем предмет из руки игрока
+//            world.setBlock(pos, Blocks.AIR.defaultBlockState(), 3); // Заменяем блок на пустоту (воздух)
         }
+//        BlockEntity blockEntity = world.getBlockEntity(pos);
+//        if (blockEntity instanceof TileEntity) {
+//            TileEntity tileEntity = new TileEntity(pos, state);
+//            System.out.println("tileEntity : " + tileEntity);
+////            System.out.println("А теперь я внутри метода добавления в руку))))");
+//            ItemStack itemStack = tileEntity.getItem(); // Получение предмета из блока
+//
+//            if (!itemStack.isEmpty()) {
+//                // Помещаем предмет в руку игрока
+//                if (!player.addItem(itemStack)) {
+//                    // Если предмет не поместился в инвентарь, выкидываем его на землю
+//                    world.addFreshEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), itemStack));
+//                }
+//
+//                // Убираем предмет из блока
+//                tileEntity.removeItem();
+//                world.setBlock(pos, Blocks.AIR.defaultBlockState(), 3); // Заменяем блок на пустоту (воздух)
+//            }
+//        }
+    }
 
-        return InteractionResult.PASS; // Взаимодействие не выполнено
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos blockPos, BlockState state) {
+        return new TileEntity(blockPos, state);
     }
 
 
