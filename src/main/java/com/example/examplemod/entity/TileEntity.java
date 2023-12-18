@@ -55,20 +55,20 @@ public class TileEntity extends BlockEntity {
                 .orElse(ItemStack.EMPTY);
     }
 
-//    public List<ItemStack> getCurrentItemStacks() {
-//        List<ItemStack> listed = new ArrayList<>();
-//        int currentpage = getCurrentPage()+1;
-//        int maxPage = currentpage*9;
-//        int minPage = maxPage-9;
-//        for (int i = minPage; i < maxPage; i++) {
-//            listed.add(itemHandler.getStackInSlot(i));
-//        }
-//        return listed;
-//    }
-//
-//    public int getCurrentPage() {
-//        return (this.currentPage<=0)?(0):(this.currentPage);
-//    }
+    public List<ItemStack> getCurrentItemStacks() {
+        List<ItemStack> listed = new ArrayList<>();
+        int currentpage = getCurrentPage()+1;
+        int maxPage = currentpage*9;
+        int minPage = maxPage-9;
+        for (int i = minPage; i < maxPage; i++) {
+            listed.add(itemHandler.getStackInSlot(i));
+        }
+        return listed;
+    }
+
+    public int getCurrentPage() {
+        return (this.currentPage<=0)?(0):(this.currentPage);
+    }
 
 //    public ItemStackHandler createItemHandlerStorageSlab() {
 //        //9 slots per page, up to 16 pages 0-15
