@@ -18,18 +18,16 @@ public class TileEntity extends BlockEntity {
 
     }
     public ItemStack getItem() {
-        return storedItem.copy(); // Возвращаем копию хранимого предмета
+        return storedItem.copy();
     }
 
-    // Метод для установки предмета в блок
     public void setItem(ItemStack itemStack) {
-        storedItem = itemStack.copy(); // Устанавливаем переданный предмет в хранимый предмет блока
-        setChanged(); // Отмечаем блок, как изменившийся
+        storedItem = itemStack.copy();
+        setChanged();
     }
 
-    // Метод для удаления предмета из блока
     public void removeItem() {
-        storedItem = ItemStack.EMPTY; // Устанавливаем хранимый предмет в пустую ItemStack
-        setChanged(); // Отмечаем блок, как изменившийся
+        storedItem = ItemStack.EMPTY;
+        setChanged();
     }
 }
