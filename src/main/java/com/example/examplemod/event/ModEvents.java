@@ -1,7 +1,10 @@
 package com.example.examplemod.event;
 
 import com.example.examplemod.ExampleMod;
+import com.example.examplemod.entity.TileEntity;
 import com.example.examplemod.init.MyBlock;
+import com.example.examplemod.init.MyBlockEntities;
+import com.example.examplemod.render.TileRender;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.animal.Sheep;
@@ -10,6 +13,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -77,6 +83,14 @@ public class ModEvents {
             }
         }
 
+    }
+
+    @Mod.EventBusSubscriber(modid = ExampleMod.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class ClientModBusEvents {
+        @SubscribeEvent
+        public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
+            event.registerBlockEntityRenderer(MyBlockEntities.MY_TILE_ENTITY.get(), TileRender::new);
+        }
     }
 
 }

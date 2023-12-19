@@ -24,8 +24,13 @@ import java.util.function.Supplier;
 @Mod.EventBusSubscriber(modid = ExampleMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MyBlock {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ExampleMod.MODID);
-    public static final RegistryObject<Block> MY_BLOCK = registerBlock("my_block", () -> new BridgeBlock(BlockBehaviour.Properties.of(Material.STONE).strength(1.0F, 1.0F)));
-    public static final RegistryObject<Block> MY_TILE_BLOCK = registerBlock("my_tile_block", () -> new TileBlock(BlockBehaviour.Properties.of(Material.STONE).strength(1.0F, 1.0F)));
+    public static final RegistryObject<Block> MY_BLOCK =
+            registerBlock("my_block", () -> new BridgeBlock(
+                    BlockBehaviour.Properties.of(Material.STONE).strength(1.0F, 1.0F)));
+    public static final RegistryObject<Block> MY_TILE_BLOCK =
+            registerBlock("my_tile_block", () -> new TileBlock(BlockBehaviour.Properties.of(Material.STONE)
+                    .strength(1.0F, 1.0F)
+                    .lightLevel((state) -> 10)));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
@@ -41,26 +46,3 @@ public class MyBlock {
         BLOCKS.register(eventBus);
     }
 }
-
-
-//    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ExampleMod.MODID);
-
-
-//    public static final RegistryObject<Block> MY_BLOCK = registerBlock("my_block", () -> new Block(BlockBehaviour.Properties.of(Material.STONE).strength(1, 1).sound(SoundType.BONE_BLOCK).noCollission()), CreativeModeTab.TAB_BUILDING_BLOCKS);
-
-
-//    public static void registerBlocks() {
-//        BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
-//
-//        for (RegistryObject<? extends Block> block : BLOCKS.getEntries())
-//            ITEMS.register(block.getId().getPath(), () -> new BlockItem(block.get(), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
-//
-//        ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-//    }
-
-//    private static <T extends Block> RegistryObject<T> registerBlockWithoutBlockItem(String name, Supplier<T> block) {
-//        return BLOCKS.register(name, block);
-//    }
-//    private static boolean always(BlockState p_50775_, BlockGetter p_50776_, BlockPos p_50777_) {
-//        return true;
-//    }
