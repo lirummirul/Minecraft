@@ -18,6 +18,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 
 public class TileRender implements BlockEntityRenderer<TileEntity> {
+    private static final double MAX_OFFSET = 0.045;
+    private static final double ANIMATION_SPEED = 2.45;
+
     public TileRender(BlockEntityRendererProvider.Context context) { }
 
     @Override
@@ -25,17 +28,18 @@ public class TileRender implements BlockEntityRenderer<TileEntity> {
         ItemStack itemStack = tileEntity.getItem();
         Level level = tileEntity.getLevel();
         if (!itemStack.isEmpty()) {
-            renderItemFixed(tileEntity, level, stack, source, itemStack, 0.5D, 1.4D, 0.5D, combinedLight, combinedOverlay);
+            renderItemFixed(tileEntity, level, stack, source, itemStack, 0.5D, 1.4D, 0.5D, combinedLight);
         } else {
-            renderItemFixed(tileEntity, level, stack, source, itemStack, 0D, 0D, 0D, combinedLight, combinedOverlay);
+            renderItemFixed(tileEntity, level, stack, source, itemStack, 0D, 0D, 0D, combinedLight);
         }
     }
-    public static void renderItemFixed(TileEntity tileEntity, Level level, PoseStack poseStack, MultiBufferSource source, ItemStack itemStack, double transX, double transY, double transZ, int combinedLight, int combinedOverlay) {
+    public static void renderItemFixed(TileEntity tileEntity, Level level, PoseStack poseStack, MultiBufferSource source, ItemStack itemStack, double transX, double transY, double transZ, int combinedLight) {
         if (!itemStack.isEmpty()) {
-            float angle = (float) (System.currentTimeMillis() / 10 % 360);
+            float angle = (float) (System.currentTimeMillis() / 20 % 360);
+            double yOffset = interpolateOffset(); // Получаем интерполированное значение смещения
 
             poseStack.pushPose();
-            poseStack.translate(transX, transY, transZ);
+            poseStack.translate(transX, transY + yOffset, transZ);
             poseStack.mulPose(Vector3f.YP.rotationDegrees(angle)); // Вращение вокруг оси Y
             poseStack.scale(0.5F, 0.5F, 0.5F);
             ItemRenderer renderer = Minecraft.getInstance().getItemRenderer();
@@ -50,5 +54,11 @@ public class TileRender implements BlockEntityRenderer<TileEntity> {
         int bLight = level.getBrightness(LightLayer.BLOCK, pos);
         int sLight = level.getBrightness(LightLayer.SKY, pos);
         return LightTexture.pack(bLight, sLight);
+    }
+
+    private static double interpolateOffset() {
+        double time = System.currentTimeMillis() / 1000.0 * ANIMATION_SPEED;
+        double maxOffset = MAX_OFFSET * 2.0; // Удвоенное максимальное смещение, чтобы создать движение вверх и вниз
+        return Math.sin(time) * maxOffset;
     }
 }
