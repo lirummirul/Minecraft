@@ -19,7 +19,7 @@ import net.minecraft.world.level.LightLayer;
 
 public class TileRender implements BlockEntityRenderer<TileEntity> {
     private static final double MAX_OFFSET = 0.045;
-    private static final double ANIMATION_SPEED = 2.45;
+    private static final double ANIMATION_SPEED = 2.5;
 
     public TileRender(BlockEntityRendererProvider.Context context) { }
 
