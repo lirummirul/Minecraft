@@ -2,11 +2,16 @@ package com.example.examplemod.event;
 
 import com.example.examplemod.ExampleMod;
 import com.example.examplemod.entity.TileEntity;
+import com.example.examplemod.entity.client.TigerRenderer;
+import com.example.examplemod.entity.custom.TigerEntity;
+import com.example.examplemod.init.ModEntities;
 import com.example.examplemod.init.MyBlock;
 import com.example.examplemod.init.MyBlockEntities;
 import com.example.examplemod.render.TileRender;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -17,10 +22,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 import static com.example.examplemod.block.BridgeBlock.createdBlockPositions;
 
@@ -85,11 +93,43 @@ public class ModEvents {
 
     }
 
+    @Mod.EventBusSubscriber(modid = ExampleMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class ModEventBusEvents {
+        @SubscribeEvent
+        public static void entityAttributeEvent(EntityAttributeCreationEvent event) {
+            event.put(ModEntities.TIGER.get(), TigerEntity.setAttributes());
+        }
+    }
+
     @Mod.EventBusSubscriber(modid = ExampleMod.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientModBusEvents {
         @SubscribeEvent
         public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
             event.registerBlockEntityRenderer(MyBlockEntities.MY_TILE_ENTITY.get(), TileRender::new);
+        }
+
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event) {
+            EntityRenderers.register(ModEntities.TIGER.get(), TigerRenderer::new);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onInteract(PlayerInteractEvent.EntityInteract event) {
+        if (event.getTarget() instanceof TigerEntity) {
+            // Проверяем, что игрок действительно нажал правой кнопкой мыши (HAND_MAIN)
+            if (event.getHand() == InteractionHand.MAIN_HAND) {
+                // Получаем моба, на которого нажал игрок
+                TigerEntity tigerEntity = (TigerEntity) event.getTarget();
+
+                // Здесь вы можете добавить код для обработки действия при нажатии на моба
+                // Например, вывод какого-то сообщения или выполнение определенного действия
+
+                // Пример вывода сообщения в чат
+                if (!event.getLevel().isClientSide) {
+                    event.getEntity().sendSystemMessage(tigerEntity.getGreetingMessage);
+                }
+            }
         }
     }
 
