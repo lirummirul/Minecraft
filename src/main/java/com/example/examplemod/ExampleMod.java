@@ -1,5 +1,6 @@
 package com.example.examplemod;
 
+import com.example.examplemod.init.ModEntities;
 import com.example.examplemod.init.MyBlockEntities;
 import com.example.examplemod.init.MyBlock;
 import com.example.examplemod.item.MyItem;
@@ -22,6 +23,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
+import software.bernie.geckolib3.GeckoLib;
 
 @Mod(ExampleMod.MODID)
 public class ExampleMod {
@@ -40,7 +42,9 @@ public class ExampleMod {
         MyItem.register(modEventBus);
 
         MyBlockEntities.register(modEventBus);
-//        MyBlock.registerBlocks();
+
+        GeckoLib.initialize();
+        ModEntities.register(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);

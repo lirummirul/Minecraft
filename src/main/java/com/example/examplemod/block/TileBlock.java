@@ -40,16 +40,43 @@ public class TileBlock extends Block implements EntityBlock {
 //                    if (!player.isCreative()) { // Убрать предмет из руки игрока
                         heldItem.shrink(1); // Уменьшить количество предметов в руке
 //                    }
+//                    BlockState myBlockState = Blocks.AIR.defaultBlockState();
+//                    cubeUbe(pos, level, myBlockState);
                     return InteractionResult.SUCCESS;
                 }
             } else if (heldItem.isEmpty() && !storedItemStack.isEmpty()) { // Если в руке игрока ничего нет, попробуйте взять предмет из блока
                 player.setItemInHand(hand, storedItemStack.copy()); // Очистить предмет из блока
                 tileEntity.removeItem();
+//                BlockState myBlockState = Blocks.WARPED_PLANKS.defaultBlockState();
+                cubeUbe(pos, level);
                 return InteractionResult.SUCCESS;
             }
         }
 
         return InteractionResult.PASS;
+    }
+
+    public void cubeUbe(BlockPos pos, Level world) {
+        int playerX = pos.getX();
+        int playerY = pos.getY();
+        int playerZ = pos.getZ();
+
+        BlockState myBlockState = Blocks.WARPED_PLANKS.defaultBlockState();
+        BlockState myBlockState2 = Blocks.IRON_BARS.defaultBlockState();
+
+        int radius = 6;
+
+        for (double x = playerX - radius; x <= playerX + radius; x++) {
+            for (double y = playerY - radius; y <= playerY + radius; y++) {
+                for (double z = playerZ - radius; z <= playerZ + radius; z++) {
+                    double distance = Math.sqrt(Math.pow(x - playerX, 2) + Math.pow(y - playerY, 2) + Math.pow(z - playerZ, 2));
+                    if (Math.abs(distance - radius) < 0.5) {
+                        BlockPos posPlanks = new BlockPos(x, y, z);
+                        world.setBlock(posPlanks, myBlockState, 3);
+                    }
+                }
+            }
+        }
     }
 
     @org.jetbrains.annotations.Nullable
