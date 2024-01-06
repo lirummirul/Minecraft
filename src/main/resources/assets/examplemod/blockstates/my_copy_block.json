@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "":
+    {"model": "examplemod:block/my_copy_block"}
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "custom_model_data": 1
+      }
+    }
+  ]
+}

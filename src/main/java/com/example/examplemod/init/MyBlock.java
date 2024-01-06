@@ -2,6 +2,7 @@ package com.example.examplemod.init;
 
 import com.example.examplemod.ExampleMod;
 import com.example.examplemod.block.BridgeBlock;
+import com.example.examplemod.block.CopyBlock;
 import com.example.examplemod.block.TileBlock;
 import com.example.examplemod.entity.TileEntity;
 import com.example.examplemod.item.MyItem;
@@ -31,6 +32,10 @@ public class MyBlock {
             registerBlock("my_tile_block", () -> new TileBlock(BlockBehaviour.Properties.of(Material.STONE)
                     .strength(1.0F, 1.0F)
                     .lightLevel((state) -> 10)));
+
+    public static final RegistryObject<Block> MY_COPY_BLOCK =
+            registerBlock("my_copy_block", () -> new CopyBlock(
+                    BlockBehaviour.Properties.of(Material.STONE).strength(1.0F, 1.0F)));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
