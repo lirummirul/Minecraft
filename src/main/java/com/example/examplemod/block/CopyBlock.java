@@ -11,15 +11,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CopyBlock extends Block {
     private Map<BlockPos, BlockState> mapCopyState = new HashMap<>();
-//    private List<BlockPos> positions = new ArrayList<>();
-    Entity copiedEntity = null;
+    private final Map<BlockPos, Entity> mapEntities = new HashMap<>();
     public CopyBlock(Properties properties) {
         super(properties);
     }
@@ -33,6 +31,8 @@ public class CopyBlock extends Block {
 
         if (player.isShiftKeyDown()) {
             mapCopyState.clear();
+            mapEntities.clear();
+
             for (int x = -radius; x <= radius; x++) {
                 for (int y = -radius; y <= radius; y++) {
                     for (int z = -radius; z <= radius; z++) {
@@ -40,15 +40,14 @@ public class CopyBlock extends Block {
                         BlockState targetBlockState = level.getBlockState(targetPos);
                         BlockPos offset = new BlockPos(x, y, z);
                         mapCopyState.put(offset, targetBlockState);
-                        // Поиск и сохранение первой сущности для копирования
+
                         List<Entity> entities = level.getEntities(null, new AABB(targetPos));
-                        if (!entities.isEmpty() && copiedEntity == null) {
-                            copiedEntity = entities.get(0);
+                        if (!entities.isEmpty()) {
+                            mapEntities.put(offset, entities.get(0));
                         }
                     }
                 }
             }
-
             return InteractionResult.SUCCESS;
         } else if (!mapCopyState.isEmpty()) {
             for (Map.Entry<BlockPos, BlockState> entry : mapCopyState.entrySet()) {
@@ -56,17 +55,16 @@ public class CopyBlock extends Block {
                 BlockPos copyTargetPos = pos.offset(offset);
                 BlockState copyTargetState = entry.getValue();
                 level.setBlock(copyTargetPos, copyTargetState, 3);
-                // Копирование выбранной сущности
+
+                Entity copiedEntity = mapEntities.get(offset);
                 if (copiedEntity != null) {
                     Entity newEntity = copiedEntity.getType().create(level);
                     if (newEntity != null) {
                         newEntity.moveTo(copyTargetPos.getX(), copyTargetPos.getY(), copyTargetPos.getZ());
                         level.addFreshEntity(newEntity);
-//                        copiedEntity
                     }
                 }
             }
-
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
