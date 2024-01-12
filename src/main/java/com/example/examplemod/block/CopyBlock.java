@@ -2,6 +2,7 @@ package com.example.examplemod.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -14,22 +15,19 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import oshi.util.tuples.Pair;
 
 import javax.print.attribute.standard.Copies;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 
 public class CopyBlock extends Block {
+
     private Map<BlockPos, BlockState> mapCopyState = new HashMap<>();
     private final Map<BlockPos, Entity> mapEntities = new HashMap<>();
     private Map<BlockPos, CompoundTag> mapTileEntities = new HashMap<>();
     private  Map<BlockPos, BlockEntity> mapBlockEntity = new HashMap<>();
     private Map<BlockPos, ItemStack> mapItemBlockEntities = new HashMap<>();
-    private List<ItemStack> itemStack2 = new ArrayList<>();
-    ItemStack itemStack;
-//    private Map<BlockPos, BlockEntity> mapBlockEntities = new HashMap<>();
     public CopyBlock(Properties properties) {
         super(properties);
     }
@@ -54,6 +52,7 @@ public class CopyBlock extends Block {
                         BlockState targetBlockState = level.getBlockState(targetPos);
                         BlockPos offset = new BlockPos(x, y, z);
                         mapCopyState.put(offset, targetBlockState);
+
                         List<Entity> entities = level.getEntities(null, new AABB(targetPos));
                         if (!entities.isEmpty()) {
                             mapEntities.put(offset, entities.get(0));
@@ -62,9 +61,23 @@ public class CopyBlock extends Block {
                         BlockEntity blockEntity = level.getBlockEntity(targetPos);
 //                        System.out.println("blockEntity : " + blockEntity);
                         if (blockEntity != null) {
+                            // Проверяем, является ли блок сундуком (или другим, имеющим контейнер)
+//                            if (blockEntity instanceof AbstractContainerBlockEntity) {
+//                                AbstractContainerBlockEntity containerBlockEntity = (AbstractContainerBlockEntity) blockEntity;
+//                                Container container = containerBlockEntity.getMenu();
+//                                Container container1 = blockEntity.get
+//                                for (int i = 0; i < container.getContainerSize(); i++) {
+//                                    ItemStack stack = container.getItem(i);
+//                                    // Добавляем ItemStack в вашу коллекцию или делаем с ним что-то другое
+//                                    // Например, добавляем в mapTileEntities
+//                                    mapTileEntities.put(offset, stack);
+//                                }
+//                            }
                             CompoundTag tag = blockEntity.saveWithFullMetadata();
+
+//                            mapCopyState[offset] = blockEntity.saveWithFullMetadata();
 //                            itemStack2.add(blockEntity.saveToItem(itemStack));
-                            blockEntity.saveToItem(itemStack);
+//                            blockEntity.saveToItem(itemStack);
 
                             mapTileEntities.put(offset, tag);
                             mapBlockEntity.put(offset, blockEntity);
@@ -84,10 +97,13 @@ public class CopyBlock extends Block {
             return InteractionResult.SUCCESS;
         } else if (!mapCopyState.isEmpty()) {
 //            System.out.println(mapTileEntities);
+//            for (Map.Entry<BlockPos, BlockState> entry : mapCopyState.entrySet()) {
             for (Map.Entry<BlockPos, BlockState> entry : mapCopyState.entrySet()) {
+
                 BlockPos offset = entry.getKey();
                 BlockPos copyTargetPos = pos.offset(offset);
                 BlockState copyTargetState = entry.getValue();
+
                 level.setBlock(copyTargetPos, copyTargetState, 3);
 
                 Entity copiedEntity = mapEntities.get(offset);
@@ -100,6 +116,7 @@ public class CopyBlock extends Block {
                 }
 
                 if (!mapTileEntities.isEmpty()) {
+                    System.out.println("state : " + copyTargetState);
                     CompoundTag tag = mapTileEntities.get(offset);
                     if (tag != null) {
                         BlockEntity blockEntity = mapBlockEntity.get(offset);
