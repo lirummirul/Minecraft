@@ -99,12 +99,13 @@ public class CopyBlock extends Block {
 //            System.out.println(mapTileEntities);
 //            for (Map.Entry<BlockPos, BlockState> entry : mapCopyState.entrySet()) {
             for (Map.Entry<BlockPos, BlockState> entry : mapCopyState.entrySet()) {
-
                 BlockPos offset = entry.getKey();
                 BlockPos copyTargetPos = pos.offset(offset);
                 BlockState copyTargetState = entry.getValue();
 
-                level.setBlock(copyTargetPos, copyTargetState, 3);
+//                if (blockEntity == null) {
+                    level.setBlock(copyTargetPos, copyTargetState, 3);
+//                }
 
                 Entity copiedEntity = mapEntities.get(offset);
                 if (copiedEntity != null) {
@@ -116,21 +117,22 @@ public class CopyBlock extends Block {
                 }
 
                 if (!mapTileEntities.isEmpty()) {
-                    System.out.println("state : " + copyTargetState);
+
                     CompoundTag tag = mapTileEntities.get(offset);
                     if (tag != null) {
+                        System.out.println("state : " + copyTargetState);
                         BlockEntity blockEntity = mapBlockEntity.get(offset);
-//                        blockEntity.loadStatic(offset, copyTargetState, tag);
+                        blockEntity.loadStatic(offset, copyTargetState, tag);
                         System.out.println("blockEntity : " + blockEntity);
                         System.out.println("tag : " + tag);
 
-//                        ((Copier)blockEntity).copyData(tag);
-                        blockEntity.load(tag);
-                        blockEntity.setChanged();
-//                        Inventory inventory = (Inventory) blockEntity;
-//                        for (int i = 0; i < itemStacks.size(); i++) {
-//                            inventory.setItem(i, itemStacks.get(i));
-//                        }
+//                        blockEntity.load(tag);
+//                        blockEntity.deserializeNBT(tag);
+//                        blockEntity.setChanged();
+//                        level.setBlock(copyTargetPos, blockEntity.getBlockState(), 3);
+                        level.setBlockEntity(blockEntity);
+//                        level.
+                        System.out.println("tag2222 : " + blockEntity.saveWithFullMetadata());
                     }
                 }
             }

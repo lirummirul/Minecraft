@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "a": {
+      "item": "minecraft:book"
+    },
+    "b": {
+      "item": "minecraft:green_dye"
+    }
+  },
+  "pattern": [
+    " b ",
+    " a ",
+    "   "
+  ],
+  "result": {
+    "item": "examplemod:my_gui"
+  }
+}

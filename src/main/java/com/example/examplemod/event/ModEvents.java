@@ -4,10 +4,15 @@ import com.example.examplemod.ExampleMod;
 import com.example.examplemod.entity.TileEntity;
 import com.example.examplemod.entity.client.TigerRenderer;
 import com.example.examplemod.entity.custom.TigerEntity;
+import com.example.examplemod.gui.ModMenuType;
+import com.example.examplemod.gui.MyGuiMenu;
+import com.example.examplemod.gui.MyGuiScreen;
 import com.example.examplemod.init.ModEntities;
 import com.example.examplemod.init.MyBlock;
 import com.example.examplemod.init.MyBlockEntities;
+import com.example.examplemod.item.custom.MyGui;
 import com.example.examplemod.render.TileRender;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -111,6 +116,7 @@ public class ModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             EntityRenderers.register(ModEntities.TIGER.get(), TigerRenderer::new);
+            MenuScreens.register(ModMenuType.MY_GUI_MENU.get(), MyGuiScreen::new);
         }
     }
 

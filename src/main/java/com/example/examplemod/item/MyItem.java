@@ -3,6 +3,7 @@ package com.example.examplemod.item;
 import com.example.examplemod.ExampleMod;
 import com.example.examplemod.init.ModEntities;
 import com.example.examplemod.item.custom.MyEnderItem;
+import com.example.examplemod.item.custom.MyGui;
 import net.minecraft.world.item.Item;
 
 import net.minecraft.world.item.*;
@@ -22,6 +23,9 @@ public class MyItem {
     public static final RegistryObject<Item> TIGER_SPAWN_EGG = ITEMS.register("tiger_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.TIGER, 0xD57E36, 0x1D0D00,
                     new Item.Properties().tab(CreativeModeTab.TAB_FOOD)));
+
+    public static final RegistryObject<Item> MY_GUI = ITEMS.register("my_gui",
+            () -> new MyGui(new Item.Properties().tab(CreativeModeTab.TAB_TRANSPORTATION).stacksTo(128)));
 
     // Основной регистратор
     public static void register(IEventBus eventBus) {

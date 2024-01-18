@@ -1,5 +1,6 @@
 package com.example.examplemod;
 
+import com.example.examplemod.gui.ModMenuType;
 import com.example.examplemod.init.ModEntities;
 import com.example.examplemod.init.MyBlockEntities;
 import com.example.examplemod.init.MyBlock;
@@ -45,6 +46,8 @@ public class ExampleMod {
 
         GeckoLib.initialize();
         ModEntities.register(modEventBus);
+
+        ModMenuType.register(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
