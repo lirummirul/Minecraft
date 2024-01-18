@@ -1,9 +1,9 @@
 package com.example.examplemod.item.custom;
 
 import com.example.examplemod.gui.MyGuiMenu;
-import com.example.examplemod.item.MyItem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
@@ -14,7 +14,6 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 public class MyGui extends Item implements MenuProvider {
@@ -22,8 +21,6 @@ public class MyGui extends Item implements MenuProvider {
     protected final ContainerData data;
 
     public MyGui(Properties tab) {
-
-//        super(MyItem.MY_GUI.get(), new Item.Properties().tab(CreativeModeTab.TAB_TRANSPORTATION));
         super(new Item.Properties()
                 .tab(CreativeModeTab.TAB_MISC)
                 .stacksTo(128));
@@ -48,13 +45,9 @@ public class MyGui extends Item implements MenuProvider {
     }
 
     @Override
-//    public InteractionResult use(BlockState blockState, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
     public InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
         if (player != null) {
-            System.out.println("Я внутри use ");
-//            player.openMenu(getMenuProvider(context));
-//            NetworkHooks.openScreen(((ServerPlayer) player), getMenuProvider(context));
             player.openMenu(getMenuProvider(context));
             return InteractionResult.SUCCESS;
         }
@@ -68,7 +61,7 @@ public class MyGui extends Item implements MenuProvider {
 
     @Override
     public Component getDisplayName() {
-        return Component.literal("My GUI");
+        return Component.literal("My GUI").setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.WHITE));
     }
 
     @Nullable
